@@ -12,9 +12,10 @@ export async function generateStaticParams() {
   return files.map((file) => ({ slug: file.replace(/\.mdx?$/, '') }));
 }
 
-export default async function TaskPage({ params }: { params: { slug: string } }) {
+export default async function TaskPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const tasksDir = path.join(process.cwd(), 'src', 'tasks');
-  const filePath = path.join(tasksDir, `${params.slug}.mdx`);
+  const filePath = path.join(tasksDir, `${slug}.mdx`);
   const source = fs.readFileSync(filePath, 'utf8');
   const { content, data } = matter(source);
 
