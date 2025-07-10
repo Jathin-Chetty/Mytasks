@@ -20,9 +20,9 @@ export default function Home() {
     const { data } = matter(source);
     return {
       slug: file.replace(/\.mdx?$/, ''),
-      title: data.title || '',
-      description: data.description || '',
-      date: data.date || '',
+      title: data.title || 'Untitled Task',
+      description: data.description || 'No description provided.',
+      date: data.date || 'No date',
     };
   });
 
