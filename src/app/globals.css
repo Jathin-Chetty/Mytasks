@@ -1,6 +1,10 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --retro-bg: #18181b;
+  --retro-accent: #ffb86c;
+  --retro-card: #232336;
+  --retro-text: #f8f8f2;
+  --retro-muted: #888;
+  --retro-font: 'IBM Plex Mono', 'Fira Mono', 'Menlo', monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,11 +21,10 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #18181b 0%, #232336 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 * {
@@ -39,4 +42,55 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+.prose {
+  font-family: var(--retro-font);
+  color: var(--retro-text);
+  line-height: 1.7;
+  font-size: 1.13rem;
+  max-width: 100%;
+}
+.prose h1, .prose h2, .prose h3 {
+  color: var(--retro-accent);
+  font-family: var(--retro-font);
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+.prose h1 { font-size: 2.2em; }
+.prose h2 { font-size: 1.5em; }
+.prose h3 { font-size: 1.2em; }
+.prose p {
+  margin: 1em 0;
+}
+.prose img {
+  display: block;
+  max-width: 100%;
+  margin: 2em auto;
+  border-radius: 1em;
+  box-shadow: 0 2px 16px #0004;
+}
+.prose a {
+  color: var(--retro-accent);
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.prose a:hover {
+  color: #fffbe6;
+}
+.prose pre, .prose code {
+  font-family: var(--retro-font);
+  background: var(--retro-card);
+  color: #ffe7b3 !important; /* Light retro yellow for code text */
+  border-radius: 0.5em;
+}
+.prose pre {
+  padding: 1em;
+  overflow-x: auto;
+  margin: 2em 0;
+  box-shadow: 0 2px 16px #0002;
+}
+.prose code {
+  padding: 0.2em 0.4em;
+  font-size: 1em;
 }
