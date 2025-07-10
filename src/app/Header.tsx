@@ -1,13 +1,12 @@
 import React from 'react';
 
-const userDetails = {
-  name: 'Jathin Chetty',
-  reg: '12221556',
-  roll: '57',
-  section: '06',
-};
-
 export default function Header() {
+  const userDetails = {
+    name: 'Jathin Chetty',
+    reg: '12221556',
+    roll: '57',
+    section: '06',
+  };
   return (
     <header
       style={{
