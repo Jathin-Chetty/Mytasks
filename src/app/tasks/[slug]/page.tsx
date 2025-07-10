@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import 'prismjs/themes/prism.css';
+import Link from 'next/link';
 import Header from '../../Header';
 
 export async function generateStaticParams() {
@@ -10,13 +11,6 @@ export async function generateStaticParams() {
   const files = fs.readdirSync(tasksDir);
   return files.map((file) => ({ slug: file.replace(/\.mdx?$/, '') }));
 }
-
-const userDetails = {
-  name: 'Jathin Chetty',
-  reg: '12221556',
-  roll: '57',
-  section: '06',
-};
 
 export default async function TaskPage({ params }: { params: { slug: string } }) {
   const tasksDir = path.join(process.cwd(), 'src', 'tasks');
@@ -38,7 +32,7 @@ export default async function TaskPage({ params }: { params: { slug: string } })
           margin: '0 auto',
         }}
       >
-        <a
+        <Link
           href="/"
           style={{
             color: 'var(--retro-accent)',
@@ -52,7 +46,7 @@ export default async function TaskPage({ params }: { params: { slug: string } })
           }}
         >
           ← Back to all tasks
-        </a>
+        </Link>
         <h2 style={{ color: 'var(--retro-accent)' }}>{data.title}</h2>
         <p style={{ color: 'var(--retro-muted)' }}>{data.date} &mdash; {data.description}</p>
         <hr style={{ margin: '24px 0', borderColor: 'var(--retro-accent)' }} />
