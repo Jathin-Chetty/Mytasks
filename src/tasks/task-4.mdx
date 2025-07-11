@@ -6,4 +6,77 @@ description: "This is the fourth task."
 
 # Task 4
 
-This is the content for Task 4. You can add images, code, and more here. 
+#Launch a Static Website on S3 
+![a](/Task4cr.png)
+![b](Task4Runnning.png)
+![c](Task4s3.png)
+
+# Code
+## main.tf
+```tf
+provider "aws" {
+    region = "ap-south-1"
+    access_key ="***"
+    secret_key ="***"
+}
+
+resource "aws_s3_bucket" "website" {
+  bucket = "bytewave-website-xx"  # replace 'xx' with your initials
+}
+
+resource "aws_s3_bucket_website_configuration" "site" {
+  bucket = aws_s3_bucket.website.id
+
+  index_document {
+    suffix = "index.html"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "block" {
+  bucket = aws_s3_bucket.website.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "policy" {
+  bucket = aws_s3_bucket.website.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Sid       = "PublicReadGetObject",
+      Effect    = "Allow",
+      Principal = "*",
+      Action    = "s3:GetObject",
+      Resource  = "${aws_s3_bucket.website.arn}/*"
+    }]
+  })
+}
+
+resource "aws_s3_object" "index" {
+  bucket       = aws_s3_bucket.website.id
+  key          = "index.html"
+  source       = "${path.module}/index.html"
+  content_type = "text/html"
+  # Remove the ACL line below
+  # acl          = "public-read"
+}
+```
+
+## output.tf
+```
+output "website_url" {
+  value = aws_s3_bucket_website_configuration.site.website_endpoint
+}
+```
+
+## index.html
+```html
+<html>
+  <head><title>ByteWave Solutions</title></head>
+  <body><h1>Welcome to ByteWave Solutions</h1></body>
+</html>
+```
