@@ -5,6 +5,8 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import 'prismjs/themes/prism.css';
 import Link from 'next/link';
 import Header from '../../Header';
+import Tabs from '../../../components/Tabs';
+import Tab from '../../../components/Tab';
 
 export async function generateStaticParams() {
   const tasksDir = path.join(process.cwd(), 'src', 'tasks');
@@ -52,7 +54,7 @@ export default async function TaskPage({ params }: { params: Promise<{ slug: str
         <p style={{ color: 'var(--retro-muted)' }}>{data.date} &mdash; {data.description}</p>
         <hr style={{ margin: '24px 0', borderColor: 'var(--retro-accent)' }} />
         <article className="prose">
-          <MDXRemote source={content} />
+          <MDXRemote source={content} components={{ Tabs, Tab }} />
         </article>
       </main>
     </>

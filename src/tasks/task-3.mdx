@@ -4,6 +4,23 @@ date: "2024-06-12"
 description: "This is the third task."
 ---
 
+import Tabs from '../components/Tabs'
+
 # Task 3
 
-This is the content for Task 3. You can add images, code, and more here. 
+<Tabs
+  tabs={[
+    { label: "Subtask 1", content: (<>
+      <h3>Subtask 1</h3>
+      <p>This is the content for subtask 1. You can add images, code, and more here.</p>
+    </>) },
+    { label: "Subtask 2", content: (<>
+      <h3>Subtask 2</h3>
+      <p>This is the content for subtask 2. You can add images, code, and more here.</p>
+    </>) },
+    { label: "Subtask 3", content: (<>
+      <h3>Subtask 3</h3>
+      <p>This is the content for subtask 3. You can add images, code, and more here.</p>
+    </>) },
+  ]}
+/> 
