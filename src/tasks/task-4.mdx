@@ -90,7 +90,70 @@ import Tab from '../components/Tab'
   </Tab>
   <Tab label="EC2 dev server">
 
-  Content for EC2 dev server will go here.
+    # Deploy EC2 Dev Server with Python – “CloudNova Inc.”
+
+  ![EC2 SSH](/task42shh.png)
+    ## code
+    ### main.tf
+  ```sh
+    provider "aws" {
+  region     = "us-east-1"
+  secret_key = "*****"
+  access_key = "*****"
+}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_security_group" "ssh_access" {
+  name        = "allow_ssh"
+  description = "Allow SSH inbound traffic"
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "dev_server" {
+  ami                    = data.aws_ami.amazon_linux.id
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.ssh_access.id]
+  key_name               = "developer"  # Update with your existing AWS key pair
+
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              yum install -y python3 git
+              EOF
+
+  tags = {
+    Name = "cloudnova-dev-server"
+  }
+}
+  ```
+  ### outputs.tf
+  ```
+  output "instance_ip" {
+  value = aws_instance.dev_server.public_ip
+}
+
+  ```
 
   </Tab>
 </Tabs>
