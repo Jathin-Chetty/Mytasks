@@ -8,19 +8,109 @@ import Tabs from '../components/Tabs'
 
 # Task 3
 
-<Tabs
-  tabs={[
-    { label: "Subtask 1", content: (<>
-      <h3>Subtask 1</h3>
-      <p>This is the content for subtask 1. You can add images, code, and more here.</p>
-    </>) },
-    { label: "Subtask 2", content: (<>
-      <h3>Subtask 2</h3>
-      <p>This is the content for subtask 2. You can add images, code, and more here.</p>
-    </>) },
-    { label: "Subtask 3", content: (<>
-      <h3>Subtask 3</h3>
-      <p>This is the content for subtask 3. You can add images, code, and more here.</p>
-    </>) },
-  ]}
-/> 
+<Tabs>
+  <Tab label="AWS EC2">
+    making aws ecs using terraform
+
+    ![Task 1 Code](/task1Code.png)
+    ![Task 1 EC2](/task1EC2.png)
+
+    Created EC2 instance using AWS.
+  </Tab>
+  <Tab label="AWS VPC">
+    # making aws vpc using terraform
+
+    ![Task 2 Code](/task2code.png)
+    ![Task 2 running](/task2running.png)
+    ![Task 2 result](/task2result.png)
+
+
+    # Code
+    ```tf
+    provider "aws" {
+      region     = "us-east-1"
+      secret_key = "*********************"
+      access_key = "***********"
+    }
+    data "aws_ami" "ubuntu" {
+      most_recent = true
+      filter {
+        name   = "name"
+        values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+      }
+      filter {
+        name   = "virtualization-type"
+        values = ["hvm"]
+      }
+      owners = ["099720109477"]
+    }
+    resource "aws_instance" "Sample_demo" {
+      count                       = 1
+      ami                         = data.aws_ami.ubuntu.id
+      instance_type               = "t2.micro"
+      key_name                    = var.key_name                      #this enables SSH using your key
+      vpc_security_group_ids      = [aws_security_group.allow_tls.id] #attach the security group
+      associate_public_ip_address = true
+      tags = {
+        Name = "EC2_Without_AMI"
+      }
+    }
+    #use the default VPC
+    data "aws_vpc" "default" {
+      default = true
+    }
+    resource "aws_security_group" "allow_tls" {
+      name        = "allow_tls"
+      description = "Allow TLS inbound traffic and all outbound traffic"
+      vpc_id      = data.aws_vpc.default.id
+      tags = {
+        Name = "allow_tls"
+      }
+    }
+    # Ingress Rule for IPv4 - HTTPS traffic within the VPC
+    resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
+      security_group_id = aws_security_group.allow_tls.id
+      cidr_ipv4         = data.aws_vpc.default.cidr_block #If public HTTPS access is required then use "0.0.0.0/0"
+      from_port         = 443
+      ip_protocol       = "tcp"
+      to_port           = 443
+    }
+    # Ingress Rule for IPv6 - HTTPS traffic within the VPC
+    resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv6" {
+      security_group_id = aws_security_group.allow_tls.id
+      cidr_ipv6         = "::/0"
+      from_port         = 443
+      ip_protocol       = "tcp"
+      to_port           = 443
+    }
+    # Egress Rule - Allow all outbound IPv4 traffic
+    resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
+      security_group_id = aws_security_group.allow_tls.id
+      cidr_ipv4         = "0.0.0.0/0"
+      ip_protocol       = "-1" # semantically equivalent to all ports
+    }
+    resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
+      security_group_id = aws_security_group.allow_tls.id
+      cidr_ipv6         = "::/0"
+      ip_protocol       = "-1" # semantically equivalent to all ports
+    }
+    # Ingress Rule for SSH Access (Port 22)
+    resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv4" {
+      security_group_id = aws_security_group.allow_tls.id
+      cidr_ipv4         = "0.0.0.0/0" # Allow SSH from anywhere (consider restricting forproduction)
+      from_port         = 22
+      ip_protocol       = "tcp"
+      to_port           = 22
+    }
+    # Optional: Variable for Key Pair (to SSH into the EC2 instance)
+    variable "key_name" {
+      description = "Name of the AWS key pair for SSH access"
+      type        = string
+      default     = "devkey" # Replace with your actual key pair name
+    }
+    # Note: To use SSH, update the aws_instance block to include:
+    # key_name = var.key_name
+    # security_groups = [aws_security_group.allow_tls.name]
+    ```
+  </Tab>
+</Tabs>
