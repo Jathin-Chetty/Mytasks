@@ -15,9 +15,9 @@ export default function Tabs({ children }: { children: React.ReactNode }) {
             style={{
               padding: "8px 16px",
               border: "none",
-              borderBottom: active === idx ? "2px solid #ffb86c" : "2px solid transparent",
+              borderBottom: active === idx ? "2px solid var(--retro-accent)" : "2px solid transparent",
               background: "none",
-              color: active === idx ? "#ffb86c" : "#f8f8f2",
+              color: active === idx ? "var(--retro-accent)" : "#f8f8f2",
               fontWeight: active === idx ? "bold" : "normal",
               cursor: "pointer",
               outline: "none",
