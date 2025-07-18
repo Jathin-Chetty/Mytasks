@@ -206,9 +206,6 @@ import Tabs from '../components/Tabs'
     ![lambda2](/lambdacode.png)
 
     ```
-   
-
-
 resource "aws_iam_role" "lambda_exec_role" {
   name = "lambda_exec_role"
 
@@ -240,5 +237,65 @@ resource "aws_lambda_function" "hello_lambda" {
   source_code_hash = filebase64sha256("lambda_function_payload.zip")
 }
     ```
+  </Tab>
+  <Tab label="Cloud Formation">
+  # Cloud Formation
+  ![cf](/cloudFormation.png)
+  ![instance](/CFinstance.png)
+  # code 
+  ``` tf
+provider "aws" {
+
+  region     = "eu-west-1"
+
+}
+# Pass KeyPair name as a variable
+variable "cloudkey" {
+  description = "EC2 Key Pair name"
+  type        = string
+}
+
+resource "aws_cloudformation_stack" "ec2_stack" {
+  name          = "ec2-cfn-stack"
+  template_body = file("${path.module}/template.yaml")
+
+  parameters = {
+    KeyName      = var.cloudkey
+    InstanceType = "t2.micro"
+  }
+
+  capabilities = ["CAPABILITY_NAMED_IAM"]
+}
+  ```
+
+  # yaml file
+  ```
+  AWSTemplateFormatVersion: '2010-09-09'
+Description: Launch EC2 instance
+
+Parameters:
+  KeyName:
+    Type: String
+    Description: Name of an existing EC2 KeyPair
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t3.micro
+    Description: EC2 instance type
+
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      ImageId: ami-0b3e7dd7b2a99b08d  # Amazon Linux 2 (update for your region)
+      Tags:
+        - Key: Name
+          Value: CFN-EC2-From-Terraform
+  ```
   </Tab>
 </Tabs>
